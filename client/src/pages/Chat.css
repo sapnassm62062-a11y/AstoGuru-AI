@@ -1,0 +1,243 @@
+.chat-page {
+
+    min-height:100vh;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:
+    radial-gradient(circle at top,#312e81,#020617 70%);
+
+    color:white;
+
+    padding:20px;
+
+}
+
+
+
+.chat-card {
+
+    width:700px;
+
+    max-width:95%;
+
+    padding:35px;
+
+    border-radius:25px;
+
+    background:
+
+    rgba(15,23,42,0.88);
+
+    backdrop-filter:blur(15px);
+
+    box-shadow:
+
+    0 0 50px rgba(168,85,247,0.45);
+
+}
+
+
+
+.chat-card h1 {
+
+    text-align:center;
+
+    color:#e9d5ff;
+
+    font-size:32px;
+
+    margin-bottom:25px;
+
+}
+
+
+
+.birth-summary {
+
+    background:
+
+    rgba(30,41,59,0.8);
+
+    padding:20px;
+
+    border-radius:18px;
+
+    margin-bottom:25px;
+
+    border:1px solid rgba(255,255,255,0.1);
+
+}
+
+
+
+.birth-summary h3 {
+
+    color:#c084fc;
+
+    margin-top:0;
+
+}
+
+
+
+.birth-summary p {
+
+    margin:8px 0;
+
+    color:#e2e8f0;
+
+}
+
+
+
+textarea {
+
+    width:100%;
+
+    height:120px;
+
+    resize:none;
+
+    padding:15px;
+
+    border-radius:15px;
+
+    border:none;
+
+    outline:none;
+
+    background:#1e293b;
+
+    color:white;
+
+    font-size:16px;
+
+}
+
+
+
+.chat-card button {
+
+    width:100%;
+
+    padding:15px;
+
+    margin-top:20px;
+
+    border:none;
+
+    border-radius:15px;
+
+    cursor:pointer;
+
+    color:white;
+
+    font-size:17px;
+
+    background:
+
+    linear-gradient(
+        90deg,
+        #9333ea,
+        #ec4899
+    );
+
+    transition:.3s;
+
+}
+
+
+
+.chat-card button:hover {
+
+    transform:scale(1.03);
+
+}
+
+
+
+.ai-response {
+
+    margin-top:30px;
+
+    padding:25px;
+
+    border-radius:20px;
+
+    background:
+
+    rgba(76,29,149,0.35);
+
+    border:
+
+    1px solid rgba(216,180,254,0.3);
+
+    animation:fadeIn .5s ease;
+
+}
+
+
+
+.ai-response h3 {
+
+    color:#f0abfc;
+
+}
+
+
+
+.ai-response p {
+
+    line-height:1.7;
+
+    white-space:pre-line;
+
+    color:#f8fafc;
+
+}
+
+
+
+@keyframes fadeIn {
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(20px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+
+
+@media(max-width:600px){
+
+    .chat-card{
+
+        padding:20px;
+
+    }
+
+
+    .chat-card h1{
+
+        font-size:25px;
+
+    }
+
+}
