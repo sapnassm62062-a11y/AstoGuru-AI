@@ -54,14 +54,20 @@ const User = mongoose.model("User", userSchema);
 
 
 
+
+
 // Groq Setup
+
+console.log(
+  "Groq Key Status:",
+  process.env.GROQ_API_KEY ? "Available ✅" : "Missing ❌"
+);
 
 const groq = new Groq({
 
     apiKey: process.env.GROQ_API_KEY
 
 });
-
 
 
 // Home Route
