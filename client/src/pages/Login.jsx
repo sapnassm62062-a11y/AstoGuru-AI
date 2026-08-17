@@ -13,8 +13,7 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const API_URL =
-    import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleChange = (e) => {
     setForm({
@@ -31,6 +30,12 @@ function Login() {
     setLoading(true);
     setError("");
 
+    if (!API_URL) {
+      setError("API URL is not configured ❌");
+      setLoading(false);
+      return;
+    }
+
     try {
       const loginURL = `${API_URL}/api/auth/login`;
 
@@ -38,49 +43,33 @@ function Login() {
 
       const response = await fetch(loginURL, {
         method: "POST",
-
         headers: {
           "Content-Type": "application/json",
         },
-
         body: JSON.stringify(form),
       });
 
+      const data = await response.json();
+
       console.log("Login Status:", response.status);
-
-      const contentType = response.headers.get("content-type");
-
-      let data;
-
-      if (contentType && contentType.includes("application/json")) {
-        data = await response.json();
-      } else {
-        const text = await response.text();
-
-        console.error("Server returned:", text);
-
-        throw new Error(
-          `Server returned ${response.status}. Please check API route.`
-        );
-      }
-
       console.log("Login Response:", data);
 
       if (!response.ok || !data.success) {
-        setError(data.message || "Invalid email or password");
+        setError(
+          data.message || "Login failed"
+        );
         return;
       }
 
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-      }
+      localStorage.setItem(
+        "token",
+        data.token
+      );
 
-      if (data.user) {
-        localStorage.setItem(
-          "user",
-          JSON.stringify(data.user)
-        );
-      }
+      localStorage.setItem(
+        "user",
+        JSON.stringify(data.user)
+      );
 
       alert("Login Successful 🌙");
 
@@ -90,8 +79,7 @@ function Login() {
       console.error("Login Error:", error);
 
       setError(
-        error.message ||
-          "Server not connected ❌"
+        "Unable to connect to server ❌"
       );
 
     } finally {
@@ -104,13 +92,9 @@ function Login() {
 
       <div className="auth-card">
 
-        <h1>
-          🌙 AstroGuru AI
-        </h1>
+        <h1>🌙 AstroGuru AI</h1>
 
-        <h2>
-          Welcome Back
-        </h2>
+        <h2>Welcome Back</h2>
 
         <p>
           Login to explore your cosmic guidance
@@ -162,7 +146,6 @@ function Login() {
         </form>
 
         <p className="switch-text">
-
           New user?
 
           <span
@@ -171,7 +154,6 @@ function Login() {
           >
             Create Account
           </span>
-
         </p>
 
       </div>
