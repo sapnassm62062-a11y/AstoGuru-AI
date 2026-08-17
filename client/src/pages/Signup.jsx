@@ -1,210 +1,251 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-function Signup() {
-
+const Signup = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
     name: "",
     email: "",
-    password: ""
+    password: "",
+    confirmPassword: "",
   });
 
-
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
+  const API_URL =
+    import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   const handleChange = (e) => {
-
     setForm({
       ...form,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
 
+    setError("");
+    setSuccess("");
   };
 
-
   const handleSignup = async (e) => {
-
     e.preventDefault();
+
+    setError("");
+    setSuccess("");
+
+    if (!form.name.trim()) {
+      setError("Please enter your name");
+      return;
+    }
+
+    if (!form.email.trim()) {
+      setError("Please enter your email");
+      return;
+    }
+
+    if (!form.password) {
+      setError("Please enter your password");
+      return;
+    }
+
+    if (form.password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
+    if (form.password !== form.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
 
     setLoading(true);
 
-
     try {
-
       const response = await fetch(
-  `${import.meta.env.VITE_API_URL}/api/auth/signup`,
-  {
-    method: "POST",
+        `${API_URL}/api/auth/signup`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: form.name,
+            email: form.email,
+            password: form.password,
+          }),
+        }
+      );
 
-    headers: {
-      "Content-Type": "application/json"
-    },
+      console.log("Signup Status:", response.status);
+      console.log(
+        "Signup URL:",
+        `${API_URL}/api/auth/signup`
+      );
 
-    body: JSON.stringify(form)
-  }
-);
+      const contentType = response.headers.get("content-type");
 
+      let data;
 
-      const data = await response.json();
+      if (contentType && contentType.includes("application/json")) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
 
+        console.error("Server returned non-JSON:", text);
+
+        throw new Error(
+          `Server error (${response.status}). Please check backend.`
+        );
+      }
 
       console.log("Signup Response:", data);
 
+      if (!response.ok || !data.success) {
+        setError(data.message || "Signup failed");
+        return;
+      }
 
-      if(response.ok){
+      setSuccess("Account created successfully! 🎉");
 
-        alert("Account Created Successfully ✅");
+      setForm({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
 
+      setTimeout(() => {
         navigate("/login");
+      }, 1500);
+    } catch (err) {
+      console.error("Signup Error:", err);
 
-      }
-      else{
-
-        alert(data.message || "Signup Failed");
-
-      }
-
-
-    }
-    catch(error){
-
-      console.log("Signup Error:", error);
-
-      alert("Server not connected ❌");
-
-    }
-
-
-    finally{
-
+      setError(
+        err.message ||
+          "Unable to connect to server. Please try again."
+      );
+    } finally {
       setLoading(false);
-
     }
-
   };
 
-
-
   return (
+    <div className="auth-page">
+      <div className="auth-container">
 
-    <div className="auth-container">
+        <div className="auth-left">
+          <div className="auth-brand">
+            🌙 AstroGuru AI
+          </div>
 
+          <h1>
+            Start Your
+            <br />
+            <span>Astrology Journey</span>
+          </h1>
 
-      <div className="auth-card">
+          <p>
+            Create your account and discover personalized
+            AI-powered astrology guidance.
+          </p>
+        </div>
 
+        <div className="auth-card">
 
-        <h1>
-          🌙 AstroGuru AI
-        </h1>
+          <div className="auth-header">
+            <h2>Create Account</h2>
+            <p>Join AstroGuru AI today</p>
+          </div>
 
+          {error && (
+            <div className="auth-error">
+              {error}
+            </div>
+          )}
 
-        <h2>
-          Create Account
-        </h2>
+          {success && (
+            <div className="auth-success">
+              {success}
+            </div>
+          )}
 
+          <form onSubmit={handleSignup}>
 
+            <div className="form-group">
+              <label>Full Name</label>
 
-        <form onSubmit={handleSignup}>
+              <input
+                type="text"
+                name="name"
+                placeholder="Enter your name"
+                value={form.name}
+                onChange={handleChange}
+                disabled={loading}
+              />
+            </div>
 
+            <div className="form-group">
+              <label>Email</label>
 
-          <input
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                value={form.email}
+                onChange={handleChange}
+                disabled={loading}
+              />
+            </div>
 
-            type="text"
+            <div className="form-group">
+              <label>Password</label>
 
-            name="name"
+              <input
+                type="password"
+                name="password"
+                placeholder="Create password"
+                value={form.password}
+                onChange={handleChange}
+                disabled={loading}
+              />
+            </div>
 
-            placeholder="Enter your name"
+            <div className="form-group">
+              <label>Confirm Password</label>
 
-            value={form.name}
+              <input
+                type="password"
+                name="confirmPassword"
+                placeholder="Confirm password"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                disabled={loading}
+              />
+            </div>
 
-            onChange={handleChange}
+            <button
+              type="submit"
+              className="auth-button"
+              disabled={loading}
+            >
+              {loading ? "Creating Account..." : "Create Account"}
+            </button>
 
-            required
+          </form>
 
-          />
+          <div className="auth-footer">
+            Already have an account?
 
+            <Link to="/login">
+              Login
+            </Link>
+          </div>
 
-
-          <input
-
-            type="email"
-
-            name="email"
-
-            placeholder="Enter email"
-
-            value={form.email}
-
-            onChange={handleChange}
-
-            required
-
-          />
-
-
-
-          <input
-
-            type="password"
-
-            name="password"
-
-            placeholder="Create password"
-
-            value={form.password}
-
-            onChange={handleChange}
-
-            required
-
-          />
-
-
-
-          <button 
-            type="submit"
-            disabled={loading}
-          >
-
-            {
-              loading 
-              ? "Creating..."
-              : "Create Account"
-            }
-
-          </button>
-
-
-
-        </form>
-
-
-
-        <p>
-
-          Already have an account?
-
-          <span
-            onClick={() => navigate("/login")}
-          >
-             Login
-          </span>
-
-        </p>
-
-
-
+        </div>
       </div>
-
-
     </div>
-
   );
-
-}
-
+};
 
 export default Signup;
